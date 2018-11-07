@@ -1,0 +1,16 @@
+{
+    "type": "package",
+    "name": "jmackie/elm-datetime",
+    "summary": "Date, time and datetime types",
+    "license": "MIT",
+    "version": "0.1.0",
+    "exposed-modules": ["Date.Day", "Date.Month", "Date.Year", "Date"],
+    "elm-version": "0.19.0 <= v < 0.20.0",
+    "dependencies": {
+        "elm/core": "1.0.0 <= v < 2.0.0",
+        "elm/json": "1.0.0 <= v < 2.0.0",
+        "elm/parser": "1.1.0 <= v < 2.0.0",
+        "elm/time": "1.0.0 <= v < 2.0.0"
+    },
+    "test-dependencies": {}
+}
