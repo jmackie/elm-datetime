@@ -1,13 +1,10 @@
-module Date.Month
-    exposing
-        ( Format(..)
-        , Month(..)
-        , compare
-        , fromInt
-        , parse
-        , toInt
-        , toString
-        )
+module Date.Month exposing
+    ( Month(..)
+    , Format(..)
+    , compare
+    , fromInt, toInt
+    , toString, parse
+    )
 
 {-| Gregorian month type.
 
@@ -79,7 +76,8 @@ allTheMonths =
 
 {-| Attempt to construct a `Month` from an `Int`.
 
-    fromInt 1  == Just January
+    fromInt 1 == Just January
+
     fromInt 42 == Nothing
 
 -}
@@ -128,7 +126,8 @@ fromInt int =
 
 {-| Convert a `Month` to an `Int`.
 
-    toInt January  == 1
+    toInt January == 1
+
     toInt December == 12
 
 -}
@@ -181,9 +180,11 @@ compare lhs rhs =
 
 {-| Ways in which a `Month` can be represented as a `String`.
 
-    toString FullFormat January  == "January"
+    toString FullFormat January == "January"
+
     toString ShortFormat January == "Jan"
-    toString TwoDigits January   == "1"
+
+    toString TwoDigits January == "1"
 
 Note `ShortFormat` is the first three letters of `FullFormat`.
 
@@ -197,8 +198,10 @@ type Format
 {-| Convert a `Month` to a `String` with the given format.
 
     toString ShortFormat February == "Feb"
-    toString ShortFormat January  == "Jan"
-    toString TwoDigits January    == "1"
+
+    toString ShortFormat January == "Jan"
+
+    toString TwoDigits January == "1"
 
 -}
 toString : Format -> Month -> String

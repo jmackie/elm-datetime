@@ -1,7 +1,4 @@
-module Time.Milliseconds
-    exposing
-        ( Milliseconds
-        )
+module Time.Milliseconds exposing (Milliseconds)
 
 {-| Useful constants for converting from millisecond times.
 -}

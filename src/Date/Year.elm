@@ -1,17 +1,12 @@
-module Date.Year
-    exposing
-        ( Format(..)
-        , Year
-        , add
-        , compare
-        , fromInt
-        , increment
-        , isLeapYear
-        , parse
-        , toInt
-        , toString
-        , zero
-        )
+module Date.Year exposing
+    ( Year, zero
+    , Format(..)
+    , compare
+    , increment, add
+    , fromInt, toInt
+    , toString, parse
+    , isLeapYear
+    )
 
 {-| The year component of a date.
 

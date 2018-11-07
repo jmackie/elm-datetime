@@ -1,15 +1,10 @@
-module Date
-    exposing
-        ( Date
-        , Format(..)
-        , day
-        , fromRawYearMonthDay
-        , fromYearMonthDay
-        , isoFormat
-        , month
-        , toString
-        , year
-        )
+module Date exposing
+    ( Date
+    , Format(..), isoFormat
+    , fromYearMonthDay, fromRawYearMonthDay
+    , toString
+    , year, month, day
+    )
 
 {-| A full Gregorian Date.
 

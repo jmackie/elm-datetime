@@ -1,17 +1,11 @@
-module Date.Day
-    exposing
-        ( Day
-        , Format(..)
-        , add
-        , compare
-        , fromInt
-        , increment
-        , lastDayOf
-        , one
-        , parse
-        , toInt
-        , toString
-        )
+module Date.Day exposing
+    ( Day, one, lastDayOf
+    , Format(..)
+    , compare
+    , increment, add
+    , fromInt, toInt
+    , toString, parse
+    )
 
 {-| The day component of a date.
 
@@ -48,7 +42,7 @@ module Date.Day
 
 # TODO
 
-`Day` -> `WeekDay`
+`Day` -> `WeekDay` ?
 
 -}
 
