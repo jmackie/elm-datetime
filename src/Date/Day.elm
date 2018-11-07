@@ -2,6 +2,7 @@ module Date.Day
     exposing
         ( Day
         , Format(..)
+        , add
         , compare
         , fromInt
         , increment
@@ -17,7 +18,7 @@ module Date.Day
 
 # Definition
 
-@docs Day one lastDayOf
+@docs Day, one, lastDayOf
 
 
 # String representation

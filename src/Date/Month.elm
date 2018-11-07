@@ -272,6 +272,8 @@ toStringTwoDigitsFormat month =
         String.fromInt monthInt
 
 
+{-| Parse a `Month` according to the given format.
+-}
 parse : Format -> Parser Month
 parse format =
     case format of

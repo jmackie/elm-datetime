@@ -2,12 +2,15 @@ module Date.Year
     exposing
         ( Format(..)
         , Year
+        , add
         , compare
         , fromInt
+        , increment
         , isLeapYear
         , parse
         , toInt
         , toString
+        , zero
         )
 
 {-| The year component of a date.
@@ -15,7 +18,7 @@ module Date.Year
 
 # Definition
 
-@docs Year zero
+@docs Year, zero
 
 
 # String representation

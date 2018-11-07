@@ -26,19 +26,19 @@ module Date
 
 # Constructing dates
 
-@docs fromYearMonthDay fromRawYearMonthDay
+@docs fromYearMonthDay, fromRawYearMonthDay
 
 
 # String conversion
 
-@docs toString, parse
+@docs toString
 
 
 # Accessors
 
 Provided for convenience.
 
-@docs Date
+@docs year, month, day
 
 -}
 
