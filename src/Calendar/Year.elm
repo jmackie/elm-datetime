@@ -1,4 +1,4 @@
-module Date.Year exposing
+module Calendar.Year exposing
     ( Year, zero
     , Format(..)
     , compare

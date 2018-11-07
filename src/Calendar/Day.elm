@@ -1,4 +1,4 @@
-module Date.Day exposing
+module Calendar.Day exposing
     ( Day, one, lastDayOf
     , Format(..)
     , compare
@@ -46,8 +46,8 @@ module Date.Day exposing
 
 -}
 
-import Date.Month as Month exposing (Month)
-import Date.Year as Year exposing (Year)
+import Calendar.Month as Month exposing (Month)
+import Calendar.Year as Year exposing (Year)
 import Parser exposing (Parser)
 
 

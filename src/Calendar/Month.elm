@@ -1,4 +1,4 @@
-module Date.Month exposing
+module Calendar.Month exposing
     ( Month(..)
     , Format(..)
     , compare

@@ -1,4 +1,4 @@
-module Date exposing
+module Calendar exposing
     ( Date
     , Format(..), isoFormat
     , fromYearMonthDay, fromRawYearMonthDay
@@ -37,12 +37,11 @@ Provided for convenience.
 
 -}
 
-import Date.Day as Day exposing (Day)
-import Date.Month as Month exposing (Month)
-import Date.Year as Year exposing (Year)
+import Calendar.Day as Day exposing (Day)
+import Calendar.Month as Month exposing (Month)
+import Calendar.Year as Year exposing (Year)
 import Parser exposing (Parser)
 import Task exposing (Task)
-import Time
 
 
 {-| A `Date` is composed of a `Year`, `Month`, and `Day`.
