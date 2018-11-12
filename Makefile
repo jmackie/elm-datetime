@@ -5,4 +5,4 @@ SHELL = /usr/bin/env bash
 check:
 	@find $(PWD)/src -type f -name '*.elm' -exec elm make {} > /dev/null \;
 	@elm make --docs="$$(mktemp --suffix .json)"
-
+	@elm-doctest

@@ -1,173 +1,162 @@
 module Calendar.Month exposing
-    ( Month(..)
+    ( Month
+    , fromInt, fromPosix, parse
     , Format(..)
     , compare
-    , fromInt, toInt
-    , toString, parse
+    , toString, toInt
     )
 
-{-| Gregorian month type.
+{-| The month component of a date.
 
 
-# Definition
+# Type definition
 
 @docs Month
 
 
-# String representation
+# Creating values
+
+@docs fromInt, fromPosix, parse
+
+
+# Formatting
 
 @docs Format
 
 
-# Comparison
+# Operations
 
 @docs compare
 
 
-# Integer conversion
+# Converting to other things
 
-@docs fromInt, toInt
-
-
-# String conversion
-
-@docs toString, parse
+@docs toString, toInt
 
 -}
 
 import Parser exposing (Parser)
+import Time
 
 
-{-| A Gregorian month (January through to December).
+{-| The month component of a (Gregorian) calendar date.
 -}
-type Month
-    = January
-    | February
-    | March
-    | April
-    | May
-    | June
-    | July
-    | August
-    | September
-    | October
-    | November
-    | December
+type alias Month =
+    Time.Month
 
 
-{-| An enumeration of all the months, not exposed.
--}
-allTheMonths : List Month
-allTheMonths =
-    [ January
-    , February
-    , March
-    , April
-    , May
-    , June
-    , July
-    , August
-    , September
-    , October
-    , November
-    , December
-    ]
+{-| Attempt to create a `Month` from an `Int`.
 
+    > fromInt 1
+    Just Jan : Maybe Month
 
-{-| Attempt to construct a `Month` from an `Int`.
+    > fromInt 10
+    Just Oct : Maybe Month
 
-    fromInt 1 == Just January
-
-    fromInt 42 == Nothing
+    > fromInt 42
+    Nothing : Maybe Month
 
 -}
 fromInt : Int -> Maybe Month
 fromInt int =
     case int of
         1 ->
-            Just January
+            Just Time.Jan
 
         2 ->
-            Just February
+            Just Time.Feb
 
         3 ->
-            Just March
+            Just Time.Mar
 
         4 ->
-            Just April
+            Just Time.Apr
 
         5 ->
-            Just May
+            Just Time.May
 
         6 ->
-            Just June
+            Just Time.Jun
 
         7 ->
-            Just July
+            Just Time.Jul
 
         8 ->
-            Just August
+            Just Time.Aug
 
         9 ->
-            Just September
+            Just Time.Sep
 
         10 ->
-            Just October
+            Just Time.Oct
 
         11 ->
-            Just November
+            Just Time.Nov
 
         12 ->
-            Just December
+            Just Time.Dec
 
         _ ->
             Nothing
 
 
+{-| Get a `Month` from a time zone and posix time.
+
+    > fromPosix Time.utc (Time.millisToPosix 42)
+    Jan : Month
+
+-}
+fromPosix : Time.Zone -> Time.Posix -> Month
+fromPosix =
+    Time.toMonth
+
+
 {-| Convert a `Month` to an `Int`.
 
-    toInt January == 1
+    > toInt Time.Jan
+    1 : Int
 
-    toInt December == 12
+    > toInt Time.Dec
+    12 : Int
 
 -}
 toInt : Month -> Int
 toInt month =
     case month of
-        January ->
+        Time.Jan ->
             1
 
-        February ->
+        Time.Feb ->
             2
 
-        March ->
+        Time.Mar ->
             3
 
-        April ->
+        Time.Apr ->
             4
 
-        May ->
+        Time.May ->
             5
 
-        June ->
+        Time.Jun ->
             6
 
-        July ->
+        Time.Jul ->
             7
 
-        August ->
+        Time.Aug ->
             8
 
-        September ->
+        Time.Sep ->
             9
 
-        October ->
+        Time.Oct ->
             10
 
-        November ->
+        Time.Nov ->
             11
 
-        December ->
+        Time.Dec ->
             12
 
 
@@ -180,129 +169,168 @@ compare lhs rhs =
 
 {-| Ways in which a `Month` can be represented as a `String`.
 
-    toString FullFormat January == "January"
+  - `LongFormat` is the unabbreviated month name (capitalized).
+  - `ShortFormat` is the first three letters of `LongFormat`.
+  - `NumberFormat` is a string integer.
+  - `PaddedNumberFormat` is a string integer zero-padded to lengh `n`.
 
-    toString ShortFormat January == "Jan"
-
-    toString TwoDigits January == "1"
-
-Note `ShortFormat` is the first three letters of `FullFormat`.
+See `toString` examples.
 
 -}
 type Format
-    = FullFormat
+    = LongFormat
     | ShortFormat
-    | TwoDigitsFormat
+    | NumberFormat
+    | PaddedNumberFormat Int
 
 
 {-| Convert a `Month` to a `String` with the given format.
 
-    toString ShortFormat February == "Feb"
+    > toString ShortFormat Time.Feb
+    "Feb" : String
 
-    toString ShortFormat January == "Jan"
+    > toString LongFormat Time.Sep
+    "September" : String
 
-    toString TwoDigits January == "1"
+    > toString NumberFormat Time.Jan
+    "1" : String
+
+    > toString (PaddedNumberFormat 2) Time.Jan
+    "01" : String
+
+    > toString (PaddedNumberFormat 2) Time.Dec
+    "12" : String
+
+String formats are capitalized by default, you might want to lower them.
 
 -}
 toString : Format -> Month -> String
 toString format =
     case format of
-        FullFormat ->
-            toStringFullFormat
+        LongFormat ->
+            toStringLongFormat
 
         ShortFormat ->
             toStringShortFormat
 
-        TwoDigitsFormat ->
-            toStringTwoDigitsFormat
+        NumberFormat ->
+            toStringNumberFormat
+
+        PaddedNumberFormat n ->
+            toStringPaddedNumberFormat n
 
 
-toStringFullFormat : Month -> String
-toStringFullFormat month =
+toStringLongFormat : Month -> String
+toStringLongFormat month =
     case month of
-        January ->
+        Time.Jan ->
             "January"
 
-        February ->
+        Time.Feb ->
             "February"
 
-        March ->
+        Time.Mar ->
             "March"
 
-        April ->
+        Time.Apr ->
             "April"
 
-        May ->
+        Time.May ->
             "May"
 
-        June ->
+        Time.Jun ->
             "June"
 
-        July ->
+        Time.Jul ->
             "July"
 
-        August ->
+        Time.Aug ->
             "August"
 
-        September ->
+        Time.Sep ->
             "September"
 
-        October ->
+        Time.Oct ->
             "October"
 
-        November ->
+        Time.Nov ->
             "November"
 
-        December ->
+        Time.Dec ->
             "December"
 
 
 toStringShortFormat : Month -> String
 toStringShortFormat =
-    String.left 3 << toStringFullFormat
+    String.left 3 << toStringLongFormat
 
 
-toStringTwoDigitsFormat : Month -> String
-toStringTwoDigitsFormat month =
-    let
-        monthInt =
-            toInt month
-    in
-    if monthInt < 10 then
-        String.cons '0' (String.fromInt monthInt)
+toStringNumberFormat : Month -> String
+toStringNumberFormat =
+    String.fromInt << toInt
 
-    else
-        String.fromInt monthInt
+
+toStringPaddedNumberFormat : Int -> Month -> String
+toStringPaddedNumberFormat n =
+    String.pad n '0' << toStringNumberFormat
 
 
 {-| Parse a `Month` according to the given format.
+
+    > Parser.run (parse LongFormat) "January" |> Result.toMaybe
+    Just Jan : Maybe Month
+
+    > Parser.run (parse LongFormat) "March" |> Result.toMaybe
+    Just Mar : Maybe Month
+
+    > Parser.run (parse ShortFormat) "Jun" |> Result.toMaybe
+    Just Jun : Maybe Month
+
+    > Parser.run (parse NumberFormat) "4" |> Result.toMaybe
+    Just Apr : Maybe Month
+
+    > Parser.run (parse (PaddedNumberFormat 2)) "04" |> Result.toMaybe
+    Just Apr : Maybe Month
+
 -}
 parse : Format -> Parser Month
 parse format =
     case format of
-        FullFormat ->
-            parseFullFormat
+        LongFormat ->
+            parseLongFormat
 
         ShortFormat ->
             parseShortFormat
 
-        TwoDigitsFormat ->
-            parseTwoDigitsFormat
+        NumberFormat ->
+            parseNumberFormat
+
+        PaddedNumberFormat n ->
+            parsePaddedNumberFormat n
 
 
-parseFullFormat : Parser Month
-parseFullFormat =
-    Parser.oneOf (List.map (parseMonthWith (toString FullFormat)) allTheMonths)
+parseLongFormat : Parser Month
+parseLongFormat =
+    Parser.oneOf
+        (List.map (parseMonthWith (toString LongFormat)) allTheMonths)
 
 
 parseShortFormat : Parser Month
 parseShortFormat =
-    Parser.oneOf (List.map (parseMonthWith (toString ShortFormat)) allTheMonths)
+    Parser.oneOf
+        (List.map (parseMonthWith (toString ShortFormat)) allTheMonths)
 
 
-parseTwoDigitsFormat : Parser Month
-parseTwoDigitsFormat =
-    Parser.oneOf (List.map (parseMonthWith (toString TwoDigitsFormat)) allTheMonths)
+parseNumberFormat : Parser Month
+parseNumberFormat =
+    Parser.oneOf
+        (List.map (parseMonthWith (toString NumberFormat)) allTheMonths)
+
+
+parsePaddedNumberFormat : Int -> Parser Month
+parsePaddedNumberFormat n =
+    Parser.oneOf
+        (List.map (parseMonthWith (toString (PaddedNumberFormat n))) allTheMonths)
 
 
 parseMonthWith : (Month -> String) -> Month -> Parser Month
@@ -310,8 +338,23 @@ parseMonthWith f month =
     parseToken (f month) month
 
 
-{-| TODO: Should this be case insensitive?
--}
 parseToken : String -> a -> Parser a
 parseToken want a =
     Parser.token want |> Parser.andThen (\_ -> Parser.succeed a)
+
+
+allTheMonths : List Month
+allTheMonths =
+    [ Time.Jan
+    , Time.Feb
+    , Time.Mar
+    , Time.Apr
+    , Time.May
+    , Time.Jun
+    , Time.Jul
+    , Time.Aug
+    , Time.Sep
+    , Time.Oct
+    , Time.Nov
+    , Time.Dec
+    ]

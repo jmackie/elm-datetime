@@ -121,7 +121,7 @@ isoFormat : Format
 isoFormat =
     YearFormat Year.FourDigitsFormat
         (Placeholder "-"
-            (MonthFormat Month.TwoDigitsFormat
+            (MonthFormat (Month.PaddedNumberFormat 2)
                 (Placeholder "-"
                     (DayFormat Day.TwoDigitsFormat End)
                 )

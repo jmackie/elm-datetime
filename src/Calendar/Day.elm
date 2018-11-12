@@ -1,59 +1,55 @@
 module Calendar.Day exposing
-    ( Day, one, lastDayOf
+    ( Day
+    , fromInt, fromPosix, parse
+    , one, lastDayOf
     , Format(..)
-    , compare
-    , increment, add
-    , fromInt, toInt
-    , toString, parse
+    , increment, add, compare
+    , toString, toInt
     )
 
 {-| The day component of a date.
 
 
-# Definition
+# Type definition
 
-@docs Day, one, lastDayOf
+@docs Day
 
 
-# String representation
+# Creating values
+
+@docs fromInt, fromPosix, parse
+
+
+# Constants and helpers
+
+@docs one, lastDayOf
+
+
+# Formatting
 
 @docs Format
 
 
-# Comparison
+# Operations
 
-@docs compare
-
-
-# Arithmetic
-
-@docs increment, add
+@docs increment, add, compare
 
 
-# Integer conversion
+# Converting to other things
 
-@docs fromInt, toInt
-
-
-# String conversion
-
-@docs toString, parse
-
-
-# TODO
-
-`Day` -> `WeekDay` ?
+@docs toString, toInt
 
 -}
 
 import Calendar.Month as Month exposing (Month)
 import Calendar.Year as Year exposing (Year)
 import Parser exposing (Parser)
+import Time
 
 
-{-| The day component of a date.
+{-| The day component of a (Gregorian) calendar date.
 
-This is represented internally as an integer with a lower bound of 1 and
+Internally, `Day` is represented as an integer with a lower bound of 1 and
 an upper bound of 31 (inclusive).
 
 -}
@@ -62,6 +58,16 @@ type Day
 
 
 {-| Attempt to construct a `Day` from an `Int`.
+
+    > fromInt 15
+    Just (Day 15) : Maybe Day
+
+    > fromInt 31
+    Just (Day 31) : Maybe Day
+
+    > fromInt 42
+    Nothing : Maybe Day
+
 -}
 fromInt : Int -> Maybe Day
 fromInt int =
@@ -72,14 +78,31 @@ fromInt int =
         Nothing
 
 
-{-| Internal logic for whether an `Int` is a valid day.
+{-| Get a `Day` from a time zone and posix time.
+
+    > fromPosix Time.utc (Time.millisToPosix 42)
+    Day 1 : Day
+
 -}
+fromPosix : Time.Zone -> Time.Posix -> Day
+fromPosix zone posix =
+    -- We trust the Time package...
+    Day (Time.toDay zone posix)
+
+
 isValid : Int -> Bool
 isValid int =
     int >= 1 && int <= 31
 
 
-{-| Convert a `Day` to an integer.
+{-| Convert a `Day` to an `Int`.
+
+    > toInt one
+    1 : Int
+
+    > fromInt 21 |> Maybe.map toInt
+    Just 21 : Maybe Int
+
 -}
 toInt : Day -> Int
 toInt (Day int) =
@@ -87,6 +110,10 @@ toInt (Day int) =
 
 
 {-| Add two days together. Returns `Nothing` if the resulting `Day` would be invalid.
+
+    > add one one
+    Just (Day 2) : Maybe Day
+
 -}
 add : Day -> Day -> Maybe Day
 add (Day lhs) (Day rhs) =
@@ -94,6 +121,10 @@ add (Day lhs) (Day rhs) =
 
 
 {-| `Day` one.
+
+    > toInt one
+    1 : Int
+
 -}
 one : Day
 one =
@@ -101,6 +132,10 @@ one =
 
 
 {-| Increment a `Day`. Returns `Nothing` if the resulting `Day` would be invalid.
+
+    > increment one
+    Just (Day 2) : Maybe Day
+
 -}
 increment : Day -> Maybe Day
 increment (Day int) =
@@ -115,12 +150,22 @@ compare lhs rhs =
 
 
 {-| Ways in which a `Day` can be represented as a `String`.
+
+  - `TwoDigitsFormat`: format as an integer, zero-padded to length two.
+    E.g. "02" or "12".
+
+See `toString` examples.
+
 -}
 type Format
     = TwoDigitsFormat
 
 
 {-| Convert a `Day` to a `String` with the given format.
+
+    > toString TwoDigitsFormat one
+    "01" : String
+
 -}
 toString : Format -> Day -> String
 toString format =
@@ -140,6 +185,9 @@ zeroPad n =
 
 
 {-| Parse a `Day` from an `Int` value.
+
+TODO: This should accept a `Format` value.
+
 -}
 parse : Parser Day
 parse =
@@ -160,42 +208,42 @@ parse =
 lastDayOf : Year -> Month -> Day
 lastDayOf year month =
     case month of
-        Month.January ->
+        Time.Jan ->
             Day 31
 
-        Month.February ->
+        Time.Feb ->
             if Year.isLeapYear year then
                 Day 29
 
             else
                 Day 28
 
-        Month.March ->
+        Time.Mar ->
             Day 31
 
-        Month.April ->
+        Time.Apr ->
             Day 30
 
-        Month.May ->
+        Time.May ->
             Day 31
 
-        Month.June ->
+        Time.Jun ->
             Day 30
 
-        Month.July ->
+        Time.Jul ->
             Day 31
 
-        Month.August ->
+        Time.Aug ->
             Day 31
 
-        Month.September ->
+        Time.Sep ->
             Day 30
 
-        Month.October ->
+        Time.Oct ->
             Day 31
 
-        Month.November ->
+        Time.Nov ->
             Day 30
 
-        Month.December ->
+        Time.Dec ->
             Day 31
