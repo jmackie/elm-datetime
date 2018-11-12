@@ -1,9 +1,8 @@
 module Calendar.Month exposing
     ( Month
-    , fromInt, fromPosix, parse
-    , Format(..)
+    , fromInt, fromPosix
     , compare
-    , toString, toInt
+    , toInt
     )
 
 {-| The month component of a date.
@@ -16,12 +15,7 @@ module Calendar.Month exposing
 
 # Creating values
 
-@docs fromInt, fromPosix, parse
-
-
-# Formatting
-
-@docs Format
+@docs fromInt, fromPosix
 
 
 # Operations
@@ -29,13 +23,12 @@ module Calendar.Month exposing
 @docs compare
 
 
-# Converting to other things
+# Conversions
 
-@docs toString, toInt
+@docs toInt
 
 -}
 
-import Parser exposing (Parser)
 import Time
 
 
@@ -102,7 +95,7 @@ fromInt int =
 
 {-| Get a `Month` from a time zone and posix time.
 
-    > fromPosix Time.utc (Time.millisToPosix 42)
+    > fromPosix Time.utc (Time.millisToPosix 0)
     Jan : Month
 
 -}
@@ -161,200 +154,11 @@ toInt month =
 
 
 {-| Compare two `Month` values.
+
+    > Calendar.Month.compare Time.Feb Time.Jan
+    GT : Order
+
 -}
 compare : Month -> Month -> Order
 compare lhs rhs =
     Basics.compare (toInt lhs) (toInt rhs)
-
-
-{-| Ways in which a `Month` can be represented as a `String`.
-
-  - `LongFormat` is the unabbreviated month name (capitalized).
-  - `ShortFormat` is the first three letters of `LongFormat`.
-  - `NumberFormat` is a string integer.
-  - `PaddedNumberFormat` is a string integer zero-padded to lengh `n`.
-
-See `toString` examples.
-
--}
-type Format
-    = LongFormat
-    | ShortFormat
-    | NumberFormat
-    | PaddedNumberFormat Int
-
-
-{-| Convert a `Month` to a `String` with the given format.
-
-    > toString ShortFormat Time.Feb
-    "Feb" : String
-
-    > toString LongFormat Time.Sep
-    "September" : String
-
-    > toString NumberFormat Time.Jan
-    "1" : String
-
-    > toString (PaddedNumberFormat 2) Time.Jan
-    "01" : String
-
-    > toString (PaddedNumberFormat 2) Time.Dec
-    "12" : String
-
-String formats are capitalized by default, you might want to lower them.
-
--}
-toString : Format -> Month -> String
-toString format =
-    case format of
-        LongFormat ->
-            toStringLongFormat
-
-        ShortFormat ->
-            toStringShortFormat
-
-        NumberFormat ->
-            toStringNumberFormat
-
-        PaddedNumberFormat n ->
-            toStringPaddedNumberFormat n
-
-
-toStringLongFormat : Month -> String
-toStringLongFormat month =
-    case month of
-        Time.Jan ->
-            "January"
-
-        Time.Feb ->
-            "February"
-
-        Time.Mar ->
-            "March"
-
-        Time.Apr ->
-            "April"
-
-        Time.May ->
-            "May"
-
-        Time.Jun ->
-            "June"
-
-        Time.Jul ->
-            "July"
-
-        Time.Aug ->
-            "August"
-
-        Time.Sep ->
-            "September"
-
-        Time.Oct ->
-            "October"
-
-        Time.Nov ->
-            "November"
-
-        Time.Dec ->
-            "December"
-
-
-toStringShortFormat : Month -> String
-toStringShortFormat =
-    String.left 3 << toStringLongFormat
-
-
-toStringNumberFormat : Month -> String
-toStringNumberFormat =
-    String.fromInt << toInt
-
-
-toStringPaddedNumberFormat : Int -> Month -> String
-toStringPaddedNumberFormat n =
-    String.pad n '0' << toStringNumberFormat
-
-
-{-| Parse a `Month` according to the given format.
-
-    > Parser.run (parse LongFormat) "January" |> Result.toMaybe
-    Just Jan : Maybe Month
-
-    > Parser.run (parse LongFormat) "March" |> Result.toMaybe
-    Just Mar : Maybe Month
-
-    > Parser.run (parse ShortFormat) "Jun" |> Result.toMaybe
-    Just Jun : Maybe Month
-
-    > Parser.run (parse NumberFormat) "4" |> Result.toMaybe
-    Just Apr : Maybe Month
-
-    > Parser.run (parse (PaddedNumberFormat 2)) "04" |> Result.toMaybe
-    Just Apr : Maybe Month
-
--}
-parse : Format -> Parser Month
-parse format =
-    case format of
-        LongFormat ->
-            parseLongFormat
-
-        ShortFormat ->
-            parseShortFormat
-
-        NumberFormat ->
-            parseNumberFormat
-
-        PaddedNumberFormat n ->
-            parsePaddedNumberFormat n
-
-
-parseLongFormat : Parser Month
-parseLongFormat =
-    Parser.oneOf
-        (List.map (parseMonthWith (toString LongFormat)) allTheMonths)
-
-
-parseShortFormat : Parser Month
-parseShortFormat =
-    Parser.oneOf
-        (List.map (parseMonthWith (toString ShortFormat)) allTheMonths)
-
-
-parseNumberFormat : Parser Month
-parseNumberFormat =
-    Parser.oneOf
-        (List.map (parseMonthWith (toString NumberFormat)) allTheMonths)
-
-
-parsePaddedNumberFormat : Int -> Parser Month
-parsePaddedNumberFormat n =
-    Parser.oneOf
-        (List.map (parseMonthWith (toString (PaddedNumberFormat n))) allTheMonths)
-
-
-parseMonthWith : (Month -> String) -> Month -> Parser Month
-parseMonthWith f month =
-    parseToken (f month) month
-
-
-parseToken : String -> a -> Parser a
-parseToken want a =
-    Parser.token want |> Parser.andThen (\_ -> Parser.succeed a)
-
-
-allTheMonths : List Month
-allTheMonths =
-    [ Time.Jan
-    , Time.Feb
-    , Time.Mar
-    , Time.Apr
-    , Time.May
-    , Time.Jun
-    , Time.Jul
-    , Time.Aug
-    , Time.Sep
-    , Time.Oct
-    , Time.Nov
-    , Time.Dec
-    ]

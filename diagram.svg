@@ -1,0 +1,145 @@
+<!--
+Made with GraphViz:
+
+digraph G {
+    m1 [shape=point,width=0.01,height=0.01];
+    {"Time.Posix", "Time.Zone"} -> m1 [dir=none];
+    m1 -> DateTime;
+    DateTime -> "Calendar.Date";
+    DateTime -> "Clock.Time";
+    "Calendar.Date" -> "Calendar.Year.Year";
+    "Calendar.Date" -> "Calendar.Month.Month";
+    "Calendar.Date" -> "Calendar.Day.Day";
+    "Clock.Time" -> "Clock.Hour";
+    "Clock.Time" -> "Clock.Minute";
+    "Clock.Time" -> "Clock.Second";
+    "Clock.Time" -> "Clock.Millisecond";
+}
+-->
+<svg width="1198pt" height="298pt" viewBox="0.00 0.00 1198.00 298.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph1" class="graph" transform="scale(1 1) rotate(0) translate(4 294)">
+<polygon fill="white" stroke="white" points="-4,5 -4,-294 1195,-294 1195,5 -4,5"></polygon>
+<!-- m1 -->
+<g id="node1" class="node"><title>m1</title>
+<ellipse fill="black" stroke="black" cx="646" cy="-217" rx="0.36" ry="0.36"></ellipse>
+</g>
+<!-- DateTime -->
+<g id="node7" class="node"><title>DateTime</title>
+<ellipse fill="none" stroke="black" cx="646" cy="-162" rx="49.4698" ry="18"></ellipse>
+<text text-anchor="middle" x="646" y="-157.8" font-family="Times,serif" font-size="14.00">DateTime</text>
+</g>
+<!-- m1&#45;&gt;DateTime -->
+<g id="edge6" class="edge"><title>m1-&gt;DateTime</title>
+<path fill="none" stroke="black" d="M646,-215.848C646,-214.368 646,-202.319 646,-190.1"></path>
+<polygon fill="black" stroke="black" points="649.5,-190.025 646,-180.025 642.5,-190.025 649.5,-190.025"></polygon>
+</g>
+<!-- Time.Posix -->
+<g id="node3" class="node"><title>Time.Posix</title>
+<ellipse fill="none" stroke="black" cx="583" cy="-272" rx="54.9471" ry="18"></ellipse>
+<text text-anchor="middle" x="583" y="-267.8" font-family="Times,serif" font-size="14.00">Time.Posix</text>
+</g>
+<!-- Time.Posix&#45;&gt;m1 -->
+<g id="edge3" class="edge"><title>Time.Posix-&gt;m1</title>
+<path fill="none" stroke="black" d="M602.244,-254.81C620.193,-239.711 644.43,-219.321 645.927,-218.061"></path>
+</g>
+<!-- Time.Zone -->
+<g id="node4" class="node"><title>Time.Zone</title>
+<ellipse fill="none" stroke="black" cx="710" cy="-272" rx="53.5131" ry="18"></ellipse>
+<text text-anchor="middle" x="710" y="-267.8" font-family="Times,serif" font-size="14.00">Time.Zone</text>
+</g>
+<!-- Time.Zone&#45;&gt;m1 -->
+<g id="edge4" class="edge"><title>Time.Zone-&gt;m1</title>
+<path fill="none" stroke="black" d="M690.798,-255.098C672.535,-239.975 647.615,-219.337 646.075,-218.062"></path>
+</g>
+<!-- Calendar.Date -->
+<g id="node9" class="node"><title>Calendar.Date</title>
+<ellipse fill="none" stroke="black" cx="397" cy="-90" rx="66.3023" ry="18"></ellipse>
+<text text-anchor="middle" x="397" y="-85.8" font-family="Times,serif" font-size="14.00">Calendar.Date</text>
+</g>
+<!-- DateTime&#45;&gt;Calendar.Date -->
+<g id="edge8" class="edge"><title>DateTime-&gt;Calendar.Date</title>
+<path fill="none" stroke="black" d="M608.182,-150.369C566.395,-138.621 498.742,-119.602 451.297,-106.264"></path>
+<polygon fill="black" stroke="black" points="452.07,-102.846 441.496,-103.509 450.176,-109.585 452.07,-102.846"></polygon>
+</g>
+<!-- Clock.Time -->
+<g id="node11" class="node"><title>Clock.Time</title>
+<ellipse fill="none" stroke="black" cx="795" cy="-90" rx="56.3513" ry="18"></ellipse>
+<text text-anchor="middle" x="795" y="-85.8" font-family="Times,serif" font-size="14.00">Clock.Time</text>
+</g>
+<!-- DateTime&#45;&gt;Clock.Time -->
+<g id="edge10" class="edge"><title>DateTime-&gt;Clock.Time</title>
+<path fill="none" stroke="black" d="M675.082,-147.337C697.987,-136.577 730.153,-121.465 755.406,-109.601"></path>
+<polygon fill="black" stroke="black" points="757.15,-112.649 764.712,-105.229 754.173,-106.313 757.15,-112.649"></polygon>
+</g>
+<!-- Calendar.Year.Year -->
+<g id="node13" class="node"><title>Calendar.Year.Year</title>
+<ellipse fill="none" stroke="black" cx="88" cy="-18" rx="88.3602" ry="18"></ellipse>
+<text text-anchor="middle" x="88" y="-13.8" font-family="Times,serif" font-size="14.00">Calendar.Year.Year</text>
+</g>
+<!-- Calendar.Date&#45;&gt;Calendar.Year.Year -->
+<g id="edge12" class="edge"><title>Calendar.Date-&gt;Calendar.Year.Year</title>
+<path fill="none" stroke="black" d="M347.696,-77.8309C295.429,-65.9904 212.572,-47.2202 154.541,-34.0741"></path>
+<polygon fill="black" stroke="black" points="155.256,-30.6474 144.73,-31.8514 153.709,-37.4744 155.256,-30.6474"></polygon>
+</g>
+<!-- Calendar.Month.Month -->
+<g id="node15" class="node"><title>Calendar.Month.Month</title>
+<ellipse fill="none" stroke="black" cx="296" cy="-18" rx="102.341" ry="18"></ellipse>
+<text text-anchor="middle" x="296" y="-13.8" font-family="Times,serif" font-size="14.00">Calendar.Month.Month</text>
+</g>
+<!-- Calendar.Date&#45;&gt;Calendar.Month.Month -->
+<g id="edge14" class="edge"><title>Calendar.Date-&gt;Calendar.Month.Month</title>
+<path fill="none" stroke="black" d="M373.829,-72.9406C360.392,-63.6278 343.261,-51.755 328.494,-41.5203"></path>
+<polygon fill="black" stroke="black" points="330.331,-38.535 320.118,-35.7153 326.343,-44.2883 330.331,-38.535"></polygon>
+</g>
+<!-- Calendar.Day.Day -->
+<g id="node17" class="node"><title>Calendar.Day.Day</title>
+<ellipse fill="none" stroke="black" cx="499" cy="-18" rx="82.3415" ry="18"></ellipse>
+<text text-anchor="middle" x="499" y="-13.8" font-family="Times,serif" font-size="14.00">Calendar.Day.Day</text>
+</g>
+<!-- Calendar.Date&#45;&gt;Calendar.Day.Day -->
+<g id="edge16" class="edge"><title>Calendar.Date-&gt;Calendar.Day.Day</title>
+<path fill="none" stroke="black" d="M420.145,-73.1159C433.903,-63.6744 451.562,-51.5556 466.68,-41.1807"></path>
+<polygon fill="black" stroke="black" points="468.974,-43.8513 475.238,-35.307 465.013,-38.0797 468.974,-43.8513"></polygon>
+</g>
+<!-- Clock.Hour -->
+<g id="node19" class="node"><title>Clock.Hour</title>
+<ellipse fill="none" stroke="black" cx="656" cy="-18" rx="56.0428" ry="18"></ellipse>
+<text text-anchor="middle" x="656" y="-13.8" font-family="Times,serif" font-size="14.00">Clock.Hour</text>
+</g>
+<!-- Clock.Time&#45;&gt;Clock.Hour -->
+<g id="edge18" class="edge"><title>Clock.Time-&gt;Clock.Hour</title>
+<path fill="none" stroke="black" d="M766.199,-74.496C745.232,-63.937 716.635,-49.5354 693.827,-38.0493"></path>
+<polygon fill="black" stroke="black" points="695.27,-34.8573 684.764,-33.4855 692.121,-41.1093 695.27,-34.8573"></polygon>
+</g>
+<!-- Clock.Minute -->
+<g id="node21" class="node"><title>Clock.Minute</title>
+<ellipse fill="none" stroke="black" cx="795" cy="-18" rx="64.1204" ry="18"></ellipse>
+<text text-anchor="middle" x="795" y="-13.8" font-family="Times,serif" font-size="14.00">Clock.Minute</text>
+</g>
+<!-- Clock.Time&#45;&gt;Clock.Minute -->
+<g id="edge20" class="edge"><title>Clock.Time-&gt;Clock.Minute</title>
+<path fill="none" stroke="black" d="M795,-71.6966C795,-63.9827 795,-54.7125 795,-46.1124"></path>
+<polygon fill="black" stroke="black" points="798.5,-46.1043 795,-36.1043 791.5,-46.1044 798.5,-46.1043"></polygon>
+</g>
+<!-- Clock.Second -->
+<g id="node23" class="node"><title>Clock.Second</title>
+<ellipse fill="none" stroke="black" cx="942" cy="-18" rx="64.4186" ry="18"></ellipse>
+<text text-anchor="middle" x="942" y="-13.8" font-family="Times,serif" font-size="14.00">Clock.Second</text>
+</g>
+<!-- Clock.Time&#45;&gt;Clock.Second -->
+<g id="edge22" class="edge"><title>Clock.Time-&gt;Clock.Second</title>
+<path fill="none" stroke="black" d="M825.102,-74.6655C847.2,-64.1427 877.452,-49.7371 901.644,-38.217"></path>
+<polygon fill="black" stroke="black" points="903.401,-41.2571 910.925,-33.7977 900.391,-34.9371 903.401,-41.2571"></polygon>
+</g>
+<!-- Clock.Millisecond -->
+<g id="node25" class="node"><title>Clock.Millisecond</title>
+<ellipse fill="none" stroke="black" cx="1108" cy="-18" rx="82.4768" ry="18"></ellipse>
+<text text-anchor="middle" x="1108" y="-13.8" font-family="Times,serif" font-size="14.00">Clock.Millisecond</text>
+</g>
+<!-- Clock.Time&#45;&gt;Clock.Millisecond -->
+<g id="edge24" class="edge"><title>Clock.Time-&gt;Clock.Millisecond</title>
+<path fill="none" stroke="black" d="M839.845,-78.9707C893.006,-67.0817 982.033,-47.1715 1042.81,-33.5798"></path>
+<polygon fill="black" stroke="black" points="1043.69,-36.9693 1052.68,-31.371 1042.16,-30.138 1043.69,-36.9693"></polygon>
+</g>
+</g>
+</svg>

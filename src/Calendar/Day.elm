@@ -1,10 +1,9 @@
 module Calendar.Day exposing
     ( Day
-    , fromInt, fromPosix, parse
+    , fromInt, fromPosix
     , one, lastDayOf
-    , Format(..)
     , increment, add, compare
-    , toString, toInt
+    , toInt
     )
 
 {-| The day component of a date.
@@ -17,7 +16,7 @@ module Calendar.Day exposing
 
 # Creating values
 
-@docs fromInt, fromPosix, parse
+@docs fromInt, fromPosix
 
 
 # Constants and helpers
@@ -25,25 +24,19 @@ module Calendar.Day exposing
 @docs one, lastDayOf
 
 
-# Formatting
-
-@docs Format
-
-
 # Operations
 
 @docs increment, add, compare
 
 
-# Converting to other things
+# Conversions
 
-@docs toString, toInt
+@docs toInt
 
 -}
 
 import Calendar.Month as Month exposing (Month)
 import Calendar.Year as Year exposing (Year)
-import Parser exposing (Parser)
 import Time
 
 
@@ -80,7 +73,7 @@ fromInt int =
 
 {-| Get a `Day` from a time zone and posix time.
 
-    > fromPosix Time.utc (Time.millisToPosix 42)
+    > fromPosix Time.utc (Time.millisToPosix 0)
     Day 1 : Day
 
 -}
@@ -122,8 +115,8 @@ add (Day lhs) (Day rhs) =
 
 {-| `Day` one.
 
-    > toInt one
-    1 : Int
+    > one
+    Day 1 : Day
 
 -}
 one : Day
@@ -143,64 +136,14 @@ increment (Day int) =
 
 
 {-| Compare two `Day` values.
+
+    > Calendar.Day.compare one one
+    EQ : Order
+
 -}
 compare : Day -> Day -> Order
 compare lhs rhs =
     Basics.compare (toInt lhs) (toInt rhs)
-
-
-{-| Ways in which a `Day` can be represented as a `String`.
-
-  - `TwoDigitsFormat`: format as an integer, zero-padded to length two.
-    E.g. "02" or "12".
-
-See `toString` examples.
-
--}
-type Format
-    = TwoDigitsFormat
-
-
-{-| Convert a `Day` to a `String` with the given format.
-
-    > toString TwoDigitsFormat one
-    "01" : String
-
--}
-toString : Format -> Day -> String
-toString format =
-    case format of
-        TwoDigitsFormat ->
-            toStringTwoDigitsFormat
-
-
-toStringTwoDigitsFormat : Day -> String
-toStringTwoDigitsFormat (Day int) =
-    zeroPad 2 (String.fromInt int)
-
-
-zeroPad : Int -> String -> String
-zeroPad n =
-    String.padLeft n '0'
-
-
-{-| Parse a `Day` from an `Int` value.
-
-TODO: This should accept a `Format` value.
-
--}
-parse : Parser Day
-parse =
-    Parser.int
-        |> Parser.andThen
-            (\int ->
-                case fromInt int of
-                    Nothing ->
-                        Parser.problem (String.fromInt int ++ " is not a valid day")
-
-                    Just day ->
-                        Parser.succeed day
-            )
 
 
 {-| Get the last day of the given `Year` and `Month`.

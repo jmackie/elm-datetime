@@ -1,69 +1,64 @@
 module Clock.Hour exposing
-    ( Hour, zero
-    , Format(..)
-    , compare
-    , increment, add
-    , fromInt, toInt
-    , toString, parse
+    ( Hour
+    , fromInt, fromPosix
+    , zero, midnight, Period, period
+    , increment, add, compare
+    , toInt
     )
 
-{-| The day component of a date.
+{-| The hour component of a clock time.
 
 
-# Definition
+# Type definition
 
-@docs Hour, zero
-
-
-# String representation
-
-@docs Format
+@docs Hour
 
 
-# Comparison
+# Creating values
 
-@docs compare
-
-
-# Arithmetic
-
-@docs increment, add
+@docs fromInt, fromPosix
 
 
-# Integer conversion
+# Constants and helpers
 
-@docs fromInt, toInt
-
-
-# String conversion
-
-@docs toString, parse
+@docs zero, midnight, Period, period
 
 
-# TODO
+# Operations
 
-Twelve and twenty four hour formats.
+@docs increment, add, compare
+
+
+# Conversions
+
+@docs toInt
 
 -}
 
-import Parser exposing (Parser)
+import Time
 
 
-{-| The hour component of a time value.
+{-| The hour component of a clock time.
 
-This is represented internally as an integer restricted to the range 0 to 23, inclusive.
+Internally, `Hour` is represented as an integer with a lower bound of 0 and
+an upper bound of 23 (inclusive).
 
 -}
 type Hour
     = Hour Int
 
 
-isValid : Int -> Bool
-isValid int =
-    int >= 0 && int <= 23
-
-
 {-| Attempt to construct an `Hour` from an `Int`.
+
+    > fromInt 2
+    Just (Hour 2) : Maybe Hour
+
+    > fromInt 10
+    Just (Hour 10) : Maybe Hour
+
+    > fromInt 25
+    Nothing : Maybe Hour
+
 -}
 fromInt : Int -> Maybe Hour
 fromInt int =
@@ -74,28 +69,71 @@ fromInt int =
         Nothing
 
 
+{-| Get an `Hour` from a time zone and posix time.
+
+    > fromPosix Time.utc (Time.millisToPosix 0)
+    Hour 0 : Hour
+
+-}
+fromPosix : Time.Zone -> Time.Posix -> Hour
+fromPosix zone posix =
+    -- We trust the Time package...
+    Hour (Time.toHour zone posix)
+
+
+isValid : Int -> Bool
+isValid int =
+    int >= 0 && int <= 23
+
+
 {-| Convert an `Hour` to an `Int`.
+
+    > toInt midnight
+    0 : Int
+
+    > fromInt 21 |> Maybe.map toInt
+    Just 21 : Maybe Int
+
 -}
 toInt : Hour -> Int
 toInt (Hour int) =
     int
 
 
-{-| Add two hours together. Returns `Nothing` if the result would be invalid.
--}
-add : Hour -> Hour -> Maybe Hour
-add (Hour lhs) (Hour rhs) =
-    fromInt (lhs + rhs)
-
-
 {-| Zero hours.
+
+    > zero
+    Hour 0 : Hour
+
 -}
 zero : Hour
 zero =
     Hour 0
 
 
-{-| Increment an `Hour`. Returns `Nothing` if the result would be invalid.
+{-| 12am (alias for `zero`).
+
+    > midnight
+    Hour 0 : Hour
+
+-}
+midnight : Hour
+midnight =
+    zero
+
+
+{-| Add two `Hour` values together. Returns `Nothing` if the resulting `Hour` would be invalid.
+-}
+add : Hour -> Hour -> Maybe Hour
+add (Hour lhs) (Hour rhs) =
+    fromInt (lhs + rhs)
+
+
+{-| Increment an `Hour`. Returns `Nothing` if the resulting `Hour` would be invalid.
+
+    > increment midnight
+    Just (Hour 1) : Maybe Hour
+
 -}
 increment : Hour -> Maybe Hour
 increment (Hour int) =
@@ -103,48 +141,29 @@ increment (Hour int) =
 
 
 {-| Compare two `Hour` values.
+
+    > Clock.Hour.compare midnight midnight
+    EQ : Order
+
 -}
 compare : Hour -> Hour -> Order
 compare lhs rhs =
     Basics.compare (toInt lhs) (toInt rhs)
 
 
-{-| Ways in which an `Hour` can be represented as a `String`.
+{-| Periods of a 12-hour clock.
 -}
-type Format
-    = TwoDigitsFormat
+type Period
+    = AM
+    | PM
 
 
-{-| Convert an `Hour` to a `String` with the given format.
+{-| Get the `Period` of a given hour.
 -}
-toString : Format -> Hour -> String
-toString format =
-    case format of
-        TwoDigitsFormat ->
-            toStringTwoDigitsFormat
+period : Hour -> Period
+period (Hour int) =
+    if int < 12 then
+        AM
 
-
-toStringTwoDigitsFormat : Hour -> String
-toStringTwoDigitsFormat (Hour int) =
-    zeroPad 2 (String.fromInt int)
-
-
-zeroPad : Int -> String -> String
-zeroPad n =
-    String.padLeft n '0'
-
-
-{-| Parse an `Hour` from an `Int` value.
--}
-parse : Parser Hour
-parse =
-    Parser.int
-        |> Parser.andThen
-            (\int ->
-                case fromInt int of
-                    Nothing ->
-                        Parser.problem (String.fromInt int ++ " is not a valid hour")
-
-                    Just hour ->
-                        Parser.succeed hour
-            )
+    else
+        PM

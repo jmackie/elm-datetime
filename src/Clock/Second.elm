@@ -1,135 +1,140 @@
 module Clock.Second exposing
-    ( Second, zero
-    , Format(..)
-    , compare
-    , add
-    , fromFloat, toFloat
-    , toString, parse
+    ( Second
+    , zero
+    , fromInt, fromPosix
+    , increment, add, compare
+    , toInt
     )
 
-{-| The seconds component of a time value.
+{-| The second component of a clock time.
 
 
-# Definition
+# Type definition
 
-@docs Second, zero
-
-
-# String representation
-
-@docs Format
+@docs Second
 
 
-# Comparison
+# Constants
 
-@docs compare
-
-
-# Arithmetic
-
-@docs add
+@docs zero
 
 
-# Float conversion
+# Creating values
 
-@docs fromFloat, toFloat
+@docs fromInt, fromPosix
 
 
-# String conversion
+# Operations
 
-@docs toString, parse
+@docs increment, add, compare
+
+
+# Conversions
+
+@docs toInt
 
 -}
 
-import Parser exposing (Parser)
+import Time
 
 
-{-| The second component of a time value.
+{-| The second component of a clock time.
+
+Internally, `Second` is represented as an integer with a lower bound of 0 and
+an upper bound of 59 (inclusive).
+
 -}
 type Second
-    = Second Float
+    = Second Int
 
 
-isValid : Float -> Bool
-isValid int =
-    int >= 0 && int < 60
+{-| Attempt to construct a `Second` from an `Int`.
 
+    > fromInt 3
+    Just (Second 2) : Maybe Second
 
-{-| Attempt to construct a `Second` from a `Float`.
+    > fromInt 45
+    Just (Second 45) : Maybe Second
+
+    > fromInt 75
+    Nothing : Maybe Second
+
 -}
-fromFloat : Float -> Maybe Second
-fromFloat float =
-    if isValid float then
-        Just (Second float)
+fromInt : Int -> Maybe Second
+fromInt int =
+    if isValid int then
+        Just (Second int)
 
     else
         Nothing
 
 
-{-| Convert a `Second` to a `Float`.
+{-| Get a `Second` from a time zone and posix time.
+
+    > fromPosix Time.utc (Time.millisToPosix 0)
+    Second 0 : Second
+
 -}
-toFloat : Second -> Float
-toFloat (Second float) =
-    float
+fromPosix : Time.Zone -> Time.Posix -> Second
+fromPosix zone posix =
+    -- We trust the Time package...
+    Second (Time.toSecond zone posix)
+
+
+isValid : Int -> Bool
+isValid int =
+    int >= 0 && int <= 59
+
+
+{-| Convert a `Second` to an `Int`.
+
+    > toInt zero
+    0 : Int
+
+    > fromInt 50 |> Maybe.map toInt
+    Just 50 : Maybe Int
+
+-}
+toInt : Second -> Int
+toInt (Second int) =
+    int
+
+
+{-| Second zero.
+
+    > zero
+    Second 0 : Second
+
+-}
+zero : Second
+zero =
+    Second 0
 
 
 {-| Add two `Second` values together. Returns `Nothing` if the result would be invalid.
 -}
 add : Second -> Second -> Maybe Second
 add (Second lhs) (Second rhs) =
-    fromFloat (lhs + rhs)
+    fromInt (lhs + rhs)
 
 
-{-| Zero seconds.
+{-| Increment a `Second`. Returns `Nothing` if the result would be invalid.
+
+    > increment zero
+    Just (Second 1) : Maybe Second
+
 -}
-zero : Second
-zero =
-    Second 0.0
+increment : Second -> Maybe Second
+increment (Second int) =
+    fromInt (int + 1)
 
 
 {-| Compare two `Second` values.
+
+    > Clock.Second.compare zero zero
+    EQ : Order
+
 -}
 compare : Second -> Second -> Order
 compare lhs rhs =
-    Basics.compare (toFloat lhs) (toFloat rhs)
-
-
-{-| Ways in which an `Second` can be represented as a `String`.
--}
-type Format
-    = TwoDigitsFormat
-
-
-{-| Convert a `Second` value to a `String` with the given format.
--}
-toString : Format -> Second -> String
-toString format =
-    case format of
-        TwoDigitsFormat ->
-            toStringTwoDigitsFormat
-
-
-toStringTwoDigitsFormat : Second -> String
-toStringTwoDigitsFormat (Second float) =
-    zeroPad 2 (String.fromFloat float)
-
-
-zeroPad : Int -> String -> String
-zeroPad n =
-    String.padLeft n '0'
-
-
-{-| Parse an `Second` from an `Int` value.
--}
-parse : Parser Second
-parse =
-    Parser.float
-        |> Parser.andThen
-            (\float ->
-                case fromFloat float of
-                    Nothing ->
-                        Parser.problem (String.fromFloat float ++ " is not a valid second value")
-
-                    Just second ->
-                        Parser.succeed second
-            )
+    Basics.compare (toInt lhs) (toInt rhs)

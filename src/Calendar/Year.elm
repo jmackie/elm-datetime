@@ -1,58 +1,46 @@
 module Calendar.Year exposing
-    ( Year, zero
-    , Format(..)
-    , compare
-    , increment, add
-    , fromInt, toInt
-    , toString, parse
-    , isLeapYear
+    ( Year
+    , fromInt, fromPosix
+    , zero, isLeapYear
+    , increment, add, compare
+    , toInt
     )
 
 {-| The year component of a date.
 
 
-# Definition
+# Type definition
 
-@docs Year, zero
-
-
-# String representation
-
-@docs Format
+@docs Year
 
 
-# Comparison
+# Creating values
 
-@docs compare
-
-
-# Arithmetic
-
-@docs increment, add
+@docs fromInt, fromPosix
 
 
-# Integer conversion
+# Constants and helpers
 
-@docs fromInt, toInt
-
-
-# String conversion
-
-@docs toString, parse
+@docs zero, isLeapYear
 
 
-# Questions
+# Operations
 
-@docs isLeapYear
+@docs increment, add, compare
+
+
+# Conversions
+
+@docs toInt
 
 -}
 
-import Parser exposing (Parser)
+import Time
 
 
-{-| The year component of a date.
+{-| The year component of a (Gregorian) calendar date.
 
-This is represented internally as a year with a lower bound of 0 (inclusive).
+Internally, `Year` is represented as an integer with a lower bound of 0.
 
 -}
 type Year
@@ -60,6 +48,13 @@ type Year
 
 
 {-| Attempt to construct a `Year` from an `Int`.
+
+    > fromInt 2018
+    Just (Year 2018) : Maybe Year
+
+    > fromInt -20
+    Nothing : Maybe Year
+
 -}
 fromInt : Int -> Maybe Year
 fromInt int =
@@ -70,14 +65,28 @@ fromInt int =
         Nothing
 
 
-{-| Internal logic for whether an `Int` is a valid year.
--}
 isValid : Int -> Bool
 isValid int =
     int > 0
 
 
+{-| Get a `Year` from a time zone and posix time.
+
+    > fromPosix Time.utc (Time.millisToPosix 0)
+    Year 1970 : Year
+
+-}
+fromPosix : Time.Zone -> Time.Posix -> Year
+fromPosix zone posix =
+    -- We trust the Time package...
+    Year (Time.toYear zone posix)
+
+
 {-| Add two years together.
+
+    > add (increment zero) (increment zero)
+    Year 2 : Year
+
 -}
 add : Year -> Year -> Year
 add (Year lhs) (Year rhs) =
@@ -85,6 +94,13 @@ add (Year lhs) (Year rhs) =
 
 
 {-| Convert a `Year` to an `Int`.
+
+    > toInt zero
+    0 : Int
+
+    > fromInt 2018 |> Maybe.map toInt
+    Just 2018 : Maybe Int
+
 -}
 toInt : Year -> Int
 toInt (Year int) =
@@ -92,13 +108,21 @@ toInt (Year int) =
 
 
 {-| `Year` zero.
+
+    > zero
+    Year 0 : Year
+
 -}
 zero : Year
 zero =
     Year 0
 
 
-{-| Increment a `Year`
+{-| Increment a `Year`.
+
+    > increment zero
+    Year 1 : Year
+
 -}
 increment : Year -> Year
 increment (Year int) =
@@ -112,56 +136,7 @@ compare lhs rhs =
     Basics.compare (toInt lhs) (toInt rhs)
 
 
-{-| Ways in which a `Year` can be represented as a `String`.
--}
-type Format
-    = TwoDigitsFormat
-    | FourDigitsFormat
-
-
-{-| Convert a `Year` to a `String` with the given format.
--}
-toString : Format -> Year -> String
-toString format =
-    case format of
-        TwoDigitsFormat ->
-            toStringTwoDigitsFormat
-
-        FourDigitsFormat ->
-            toStringFourDigitsFormat
-
-
-toStringTwoDigitsFormat : Year -> String
-toStringTwoDigitsFormat (Year int) =
-    String.fromInt (remainderBy 100 int)
-
-
-toStringFourDigitsFormat : Year -> String
-toStringFourDigitsFormat (Year int) =
-    String.fromInt int
-
-
-{-| Parse a year from an `Int` value.
-
-Note if you expect a two digit year (for some reason?) then you should correct
-it manually based on the current year.
-
--}
-parse : Parser Year
-parse =
-    Parser.int
-        |> Parser.andThen
-            (\int ->
-                case fromInt int of
-                    Nothing ->
-                        Parser.problem (String.fromInt int ++ " is not a valid year")
-
-                    Just year ->
-                        Parser.succeed year
-            )
-
-
-{-| Check whether the given year was a leap year.
+{-| Was this year a leap year?
 -}
 isLeapYear : Year -> Bool
 isLeapYear (Year int) =

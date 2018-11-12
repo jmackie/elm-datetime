@@ -1,64 +1,64 @@
 module Clock.Minute exposing
-    ( Minute, zero
-    , Format(..)
-    , compare
-    , increment, add
-    , fromInt, toInt
-    , toString, parse
+    ( Minute
+    , zero
+    , fromInt, fromPosix
+    , increment, add, compare
+    , toInt
     )
 
-{-| The day component of a date.
+{-| The minute component of a clock time.
 
 
-# Definition
+# Type definition
 
-@docs Minute, zero
-
-
-# String representation
-
-@docs Format
+@docs Minute
 
 
-# Comparison
+# Constants
 
-@docs compare
-
-
-# Arithmetic
-
-@docs increment, add
+@docs zero
 
 
-# Integer conversion
+# Creating values
 
-@docs fromInt, toInt
+@docs fromInt, fromPosix
 
 
-# String conversion
+# Operations
 
-@docs toString, parse
+@docs increment, add, compare
+
+
+# Conversions
+
+@docs toInt
 
 -}
 
-import Parser exposing (Parser)
+import Time
 
 
-{-| The minute component of a time value.
+{-| The minute component of a clock time.
 
-This is represented internally as an integer restricted to the range 0 to 23, inclusive.
+Internally, `Minute` is represented as an integer with a lower bound of 0 and
+an upper bound of 59 (inclusive).
 
 -}
 type Minute
     = Minute Int
 
 
-isValid : Int -> Bool
-isValid int =
-    int >= 0 && int <= 23
+{-| Attempt to construct a `Minute` from an `Int`.
 
+    > fromInt 3
+    Just (Minute 2) : Maybe Minute
 
-{-| Attempt to construct an `Minute` from an `Int`.
+    > fromInt 45
+    Just (Minute 45) : Maybe Minute
+
+    > fromInt 75
+    Nothing : Maybe Minute
+
 -}
 fromInt : Int -> Maybe Minute
 fromInt int =
@@ -69,28 +69,60 @@ fromInt int =
         Nothing
 
 
-{-| Convert an `Minute` to an `Int`.
+{-| Get a `Minute` from a time zone and posix time.
+
+    > fromPosix Time.utc (Time.millisToPosix 0)
+    Minute 0 : Minute
+
+-}
+fromPosix : Time.Zone -> Time.Posix -> Minute
+fromPosix zone posix =
+    -- We trust the Time package...
+    Minute (Time.toMinute zone posix)
+
+
+isValid : Int -> Bool
+isValid int =
+    int >= 0 && int <= 59
+
+
+{-| Convert a `Minute` to an `Int`.
+
+    > toInt zero
+    0 : Int
+
+    > fromInt 50 |> Maybe.map toInt
+    Just 50 : Maybe Int
+
 -}
 toInt : Minute -> Int
 toInt (Minute int) =
     int
 
 
-{-| Add two hours together. Returns `Nothing` if the result would be invalid.
--}
-add : Minute -> Minute -> Maybe Minute
-add (Minute lhs) (Minute rhs) =
-    fromInt (lhs + rhs)
+{-| Minute zero.
 
+    > zero
+    Minute 0 : Minute
 
-{-| Zero hours.
 -}
 zero : Minute
 zero =
     Minute 0
 
 
-{-| Increment an `Minute`. Returns `Nothing` if the result would be invalid.
+{-| Add two `Minute` values together. Returns `Nothing` if the result would be invalid.
+-}
+add : Minute -> Minute -> Maybe Minute
+add (Minute lhs) (Minute rhs) =
+    fromInt (lhs + rhs)
+
+
+{-| Increment a `Minute`. Returns `Nothing` if the result would be invalid.
+
+    > increment zero
+    Just (Minute 1) : Maybe Minute
+
 -}
 increment : Minute -> Maybe Minute
 increment (Minute int) =
@@ -98,48 +130,11 @@ increment (Minute int) =
 
 
 {-| Compare two `Minute` values.
+
+    > Clock.Minute.compare zero zero
+    EQ : Order
+
 -}
 compare : Minute -> Minute -> Order
 compare lhs rhs =
     Basics.compare (toInt lhs) (toInt rhs)
-
-
-{-| Ways in which an `Minute` can be represented as a `String`.
--}
-type Format
-    = TwoDigitsFormat
-
-
-{-| Convert an `Minute` to a `String` with the given format.
--}
-toString : Format -> Minute -> String
-toString format =
-    case format of
-        TwoDigitsFormat ->
-            toStringTwoDigitsFormat
-
-
-toStringTwoDigitsFormat : Minute -> String
-toStringTwoDigitsFormat (Minute int) =
-    zeroPad 2 (String.fromInt int)
-
-
-zeroPad : Int -> String -> String
-zeroPad n =
-    String.padLeft n '0'
-
-
-{-| Parse an `Minute` from an `Int` value.
--}
-parse : Parser Minute
-parse =
-    Parser.int
-        |> Parser.andThen
-            (\int ->
-                case fromInt int of
-                    Nothing ->
-                        Parser.problem (String.fromInt int ++ " is not a valid minute")
-
-                    Just minute ->
-                        Parser.succeed minute
-            )

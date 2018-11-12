@@ -1,37 +1,23 @@
 module Calendar exposing
     ( Date
-    , Format(..), isoFormat
-    , fromYearMonthDay, fromRawYearMonthDay
-    , toString
+    , fromYearMonthDay, fromRawYearMonthDay, fromPosix
     , year, month, day
     )
 
-{-| A full Gregorian Date.
+{-| A calendar date.
 
 
-# Definition
+# Type definition
 
 @docs Date
 
 
-# String representation
+# Creating values
 
-@docs Format, isoFormat
-
-
-# Constructing dates
-
-@docs fromYearMonthDay, fromRawYearMonthDay
-
-
-# String conversion
-
-@docs toString
+@docs fromYearMonthDay, fromRawYearMonthDay, fromPosix
 
 
 # Accessors
-
-Provided for convenience.
 
 @docs year, month, day
 
@@ -40,17 +26,20 @@ Provided for convenience.
 import Calendar.Day as Day exposing (Day)
 import Calendar.Month as Month exposing (Month)
 import Calendar.Year as Year exposing (Year)
-import Parser exposing (Parser)
-import Task exposing (Task)
+import Time
 
 
-{-| A `Date` is composed of a `Year`, `Month`, and `Day`.
+{-| A full (Gregorian) calendar date.
 -}
 type Date
     = Date { year : Year, month : Month, day : Day }
 
 
 {-| Extract the `Year` part of a `Date`.
+
+    > year (fromPosix Time.utc (Time.millisToPosix 0))
+    Year 1970 : Year
+
 -}
 year : Date -> Year
 year (Date date) =
@@ -58,6 +47,10 @@ year (Date date) =
 
 
 {-| Extract the `Year` part of a `Date`.
+
+    > month (fromPosix Time.utc (Time.millisToPosix 0))
+    Jan : Month
+
 -}
 month : Date -> Month
 month (Date date) =
@@ -65,6 +58,10 @@ month (Date date) =
 
 
 {-| Extract the `Year` part of a `Date`.
+
+    > day (fromPosix Time.utc (Time.millisToPosix 0))
+    Day 1 : Day
+
 -}
 day : Date -> Day
 day (Date date) =
@@ -90,6 +87,12 @@ fromYearMonthDay y m d =
 
 Returns `Nothing` if any parts or their combination would form an invalid date.
 
+    > fromRawYearMonthDay 2018 12 11
+    Just (Date { day = Day 11, month = Nov, year = Year 2018 } : Maybe Date
+
+    > fromRawYearMonthDay 2018 2 31
+    Nothing : Maybe Date
+
 -}
 fromRawYearMonthDay : Int -> Int -> Int -> Maybe Date
 fromRawYearMonthDay rawYear rawMonth rawDay =
@@ -105,46 +108,16 @@ fromRawYearMonthDay rawYear rawMonth rawDay =
             )
 
 
-{-| Ways in which a `Date` can be represented as a `String`.
+{-| Get a `Date` from a time zone and posix time.
+
+    > fromPosix Time.utc (Time.millisToPosix 0)
+    Date { day = Day 1, month = Jan, year = Year 1970 } : Date
+
 -}
-type Format
-    = YearFormat Year.Format Format
-    | MonthFormat Month.Format Format
-    | DayFormat Day.Format Format
-    | Placeholder String Format
-    | End
-
-
-{-| "YYYY-MM-DD"
--}
-isoFormat : Format
-isoFormat =
-    YearFormat Year.FourDigitsFormat
-        (Placeholder "-"
-            (MonthFormat (Month.PaddedNumberFormat 2)
-                (Placeholder "-"
-                    (DayFormat Day.TwoDigitsFormat End)
-                )
-            )
-        )
-
-
-{-| Convert a `Date` to a `String` with the given formats.
--}
-toString : Format -> Date -> String
-toString format (Date date) =
-    case format of
-        YearFormat yearFormat nextFormat ->
-            Year.toString yearFormat date.year ++ toString nextFormat (Date date)
-
-        MonthFormat monthFormat nextFormat ->
-            Month.toString monthFormat date.month ++ toString nextFormat (Date date)
-
-        DayFormat dayFormat nextFormat ->
-            Day.toString dayFormat date.day ++ toString nextFormat (Date date)
-
-        Placeholder string nextFormat ->
-            string ++ toString nextFormat (Date date)
-
-        End ->
-            ""
+fromPosix : Time.Zone -> Time.Posix -> Date
+fromPosix zone posix =
+    Date
+        { year = Year.fromPosix zone posix
+        , month = Month.fromPosix zone posix
+        , day = Day.fromPosix zone posix
+        }
