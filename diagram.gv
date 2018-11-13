@@ -1,18 +1,18 @@
 digraph G {
     node [shape=oval, width=1.5, height=1.5];
-    ranksep=1;
-    nodesep=0.5;
+    ranksep=0.6;
+    nodesep=0.4;
 
     m1 [shape=point,width=0.01,height=0.01];
-    {"Time.Posix", "Time.Zone"} -> m1 [dir=none];
+    {Zone,Posix} -> m1 [dir=none];
     m1 -> DateTime;
-    DateTime -> "Calendar.Date";
-    DateTime -> "Clock.Time";
-    "Calendar.Date" -> "Calendar.Year.Year";
-    "Calendar.Date" -> "Calendar.Month.Month";
-    "Calendar.Date" -> "Calendar.Day.Day";
-    "Clock.Time" -> "Clock.Hour";
-    "Clock.Time" -> "Clock.Minute";
-    "Clock.Time" -> "Clock.Second";
-    "Clock.Time" -> "Clock.Millisecond";
+    DateTime -> Date;
+    DateTime -> Time;
+    Date -> Year;
+    Date -> Month;
+    Date -> Day;
+    Time -> Hour;
+    Time -> Minute;
+    Time -> Second;
+    Time -> Millisecond;
 }
