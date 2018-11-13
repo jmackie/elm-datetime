@@ -1,4 +1,8 @@
 digraph G {
+    node [shape=oval, width=1.5, height=1.5];
+    ranksep=1;
+    nodesep=0.5;
+
     m1 [shape=point,width=0.01,height=0.01];
     {"Time.Posix", "Time.Zone"} -> m1 [dir=none];
     m1 -> DateTime;
