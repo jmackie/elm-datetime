@@ -7,6 +7,12 @@ check:
 	@elm make --docs="$$(mktemp --suffix .json)"
 	@elm-doctest
 
+
+.PHONY: docs
+docs:
+	@elm make --docs=docs.json
+
+
 .PHONY: diagram
 diagram:
 	@dot -Tsvg -o diagram.svg diagram.gv
