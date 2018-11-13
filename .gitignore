@@ -4,3 +4,5 @@ elm-stuff
 repl-temp-*
 # other
 docs.json
+node_modules
+package-lock.json
