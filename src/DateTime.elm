@@ -1,7 +1,7 @@
 module DateTime exposing
     ( DateTime
     , fromPosix, fromUtcDateAndTime
-    , date, year, month, day, time, zone, hour, minute, second, millisecond
+    , date, year, month, day, weekday, time, zone, hour, minute, second, millisecond
     , toPosix
     )
 
@@ -17,7 +17,7 @@ module DateTime exposing
 
 # Accessors
 
-@docs date, year, month, day, time, zone, hour, minute, second, millisecond
+@docs date, year, month, day, weekday, time, zone, hour, minute, second, millisecond
 
 
 # Conversions
@@ -185,6 +185,17 @@ month =
 day : DateTime -> Day
 day =
     date >> Calendar.day
+
+
+{-| Extract the weekday from a `DateTime`.
+
+    > weekday (fromPosix Time.utc (Time.millisToPosix 0))
+    Thu : Time.Weekday
+
+-}
+weekday : DateTime -> Time.Weekday
+weekday (DateTime dateTime) =
+    Time.toWeekday dateTime.zone dateTime.posix
 
 
 {-| Extract the clock time from a `DateTime`.

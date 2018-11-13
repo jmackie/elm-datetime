@@ -220,6 +220,10 @@ next month =
 
 
 {-| All the months.
+
+    > List.length months
+    12 : Int
+
 -}
 months : List Month
 months =
