@@ -51,7 +51,7 @@ type Minute
 {-| Attempt to construct a `Minute` from an `Int`.
 
     > fromInt 3
-    Just (Minute 2) : Maybe Minute
+    Just (Minute 3) : Maybe Minute
 
     > fromInt 45
     Just (Minute 45) : Maybe Minute

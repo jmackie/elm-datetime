@@ -40,6 +40,10 @@ type alias Time =
 
 
 {-| Construct a clock `Time` from raw hour, minute, second, millisecond integers.
+
+    > fromRawParts 12 30 0 0 |> Maybe.map (\t -> (t.hour, t.minute))
+    Just (Hour 12,Minute 30) : Maybe ( Hour, Minute )
+
 -}
 fromRawParts : Int -> Int -> Int -> Int -> Maybe Time
 fromRawParts rawHour rawMinute rawSecond rawMillisecond =
@@ -64,6 +68,10 @@ fromRawParts rawHour rawMinute rawSecond rawMillisecond =
 
 
 {-| Get a clock `Time` from a time zone and posix time.
+
+    > fromPosix Time.utc (Time.millisToPosix 0)
+    { hour = Hour 0, millisecond = 0, minute = Minute 0, second = Second 0 } : Time
+
 -}
 fromPosix : Time.Zone -> Time.Posix -> Time
 fromPosix zone posix =
@@ -76,9 +84,15 @@ fromPosix zone posix =
 
 {-| Convert a `Time` to milliseconds.
 
-TODO
+    > fromRawParts 12 30 0 0 |> Maybe.map toMillis
+    Just 45000000 : Maybe Int
 
 -}
 toMillis : Time -> Int
-toMillis _ =
-    0
+toMillis { hour, minute, second, millisecond } =
+    List.sum
+        [ Hour.toInt hour * 3600000
+        , Minute.toInt minute * 60000
+        , Second.toInt second * 1000
+        , millisecond
+        ]

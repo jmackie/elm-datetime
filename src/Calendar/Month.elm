@@ -1,8 +1,9 @@
 module Calendar.Month exposing
     ( Month
     , fromInt, fromPosix
-    , compare
+    , compare, next
     , toInt
+    , months
     )
 
 {-| The month component of a date.
@@ -20,12 +21,17 @@ module Calendar.Month exposing
 
 # Operations
 
-@docs compare
+@docs compare, next
 
 
 # Conversions
 
 @docs toInt
+
+
+# Extras
+
+@docs months
 
 -}
 
@@ -162,3 +168,71 @@ toInt month =
 compare : Month -> Month -> Order
 compare lhs rhs =
     Basics.compare (toInt lhs) (toInt rhs)
+
+
+{-| Move to the next `Month`.
+
+    > next Time.Jan
+    Feb : Month
+
+    > next Time.Dec
+    Jan : Month
+
+-}
+next : Month -> Month
+next month =
+    case month of
+        Time.Jan ->
+            Time.Feb
+
+        Time.Feb ->
+            Time.Mar
+
+        Time.Mar ->
+            Time.Apr
+
+        Time.Apr ->
+            Time.May
+
+        Time.May ->
+            Time.Jun
+
+        Time.Jun ->
+            Time.Jul
+
+        Time.Jul ->
+            Time.Aug
+
+        Time.Aug ->
+            Time.Sep
+
+        Time.Sep ->
+            Time.Oct
+
+        Time.Oct ->
+            Time.Nov
+
+        Time.Nov ->
+            Time.Dec
+
+        Time.Dec ->
+            Time.Jan
+
+
+{-| All the months.
+-}
+months : List Month
+months =
+    [ Time.Jan
+    , Time.Feb
+    , Time.Mar
+    , Time.Apr
+    , Time.May
+    , Time.Jun
+    , Time.Jul
+    , Time.Aug
+    , Time.Sep
+    , Time.Oct
+    , Time.Nov
+    , Time.Dec
+    ]

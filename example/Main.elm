@@ -103,7 +103,7 @@ getDateTime =
 {-| Convert a `DateTime` to `"yyyy-mm-ddTHH:MM:SSZ"` format.
 -}
 toIsoString : DateTime -> String
-toIsoString { date, time } =
+toIsoString dateTime =
     let
         dateString : String
         dateString =
@@ -111,23 +111,23 @@ toIsoString { date, time } =
 
         yearString : String
         yearString =
-            date
-                |> Calendar.year
+            dateTime
+                |> DateTime.year
                 |> Year.toInt
                 |> String.fromInt
 
         monthString : String
         monthString =
-            date
-                |> Calendar.month
+            dateTime
+                |> DateTime.month
                 |> Month.toInt
                 |> String.fromInt
                 |> String.pad 2 '0'
 
         dayString : String
         dayString =
-            date
-                |> Calendar.day
+            dateTime
+                |> DateTime.day
                 |> Day.toInt
                 |> String.fromInt
                 |> String.pad 2 '0'
@@ -138,24 +138,24 @@ toIsoString { date, time } =
 
         hourString : String
         hourString =
-            time
-                |> .hour
+            dateTime
+                |> DateTime.hour
                 |> Hour.toInt
                 |> String.fromInt
                 |> String.pad 2 '0'
 
         minuteString : String
         minuteString =
-            time
-                |> .minute
+            dateTime
+                |> DateTime.minute
                 |> Minute.toInt
                 |> String.fromInt
                 |> String.pad 2 '0'
 
         secondString : String
         secondString =
-            time
-                |> .second
+            dateTime
+                |> DateTime.second
                 |> Second.toInt
                 |> String.fromInt
                 |> String.pad 2 '0'
@@ -258,12 +258,11 @@ parseIsoString =
         parseSecond =
             parseIntLike "second" Second.fromInt
     in
-    Parse.succeed DateTime
+    Parse.succeed DateTime.fromUtcDateAndTime
         |= parseDate
         |. Parse.symbol "T"
         |= parseTime
         |. Parse.symbol "Z"
-        |= Parse.succeed Time.utc
 
 
 parseIntLike : String -> (Int -> Maybe a) -> Parser a

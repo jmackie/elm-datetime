@@ -9,7 +9,11 @@
         "Calendar.Day",
         "Calendar.Month",
         "Calendar.Year",
-        "Clock.Hour"
+        "Clock",
+        "Clock.Hour",
+        "Clock.Minute",
+        "Clock.Second",
+        "DateTime"
     ],
     "elm-version": "0.19.0 <= v < 0.20.0",
     "dependencies": {

@@ -32,7 +32,14 @@ import Time
 {-| A full (Gregorian) calendar date.
 -}
 type Date
-    = Date { year : Year, month : Month, day : Day }
+    = Date InternalDate
+
+
+type alias InternalDate =
+    { year : Year
+    , month : Month
+    , day : Day
+    }
 
 
 {-| Extract the `Year` part of a `Date`.
@@ -83,12 +90,12 @@ fromYearMonthDay y m d =
             Just (Date { year = y, month = m, day = d })
 
 
-{-| Construct a `Date` from its raw constituent parts.
+{-| Construct a `Date` from its (raw) constituent parts.
 
 Returns `Nothing` if any parts or their combination would form an invalid date.
 
     > fromRawYearMonthDay 2018 12 11
-    Just (Date { day = Day 11, month = Nov, year = Year 2018 } : Maybe Date
+    Just (Date { day = Day 11, month = Dec, year = Year 2018 }) : Maybe Date
 
     > fromRawYearMonthDay 2018 2 31
     Nothing : Maybe Date

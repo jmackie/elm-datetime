@@ -51,7 +51,7 @@ type Second
 {-| Attempt to construct a `Second` from an `Int`.
 
     > fromInt 3
-    Just (Second 2) : Maybe Second
+    Just (Second 3) : Maybe Second
 
     > fromInt 45
     Just (Second 45) : Maybe Second
