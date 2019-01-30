@@ -1,7 +1,9 @@
 # elm-package generated files
 elm-stuff
+
 # elm-repl generated files
 repl-temp-*
+
 # other
 docs.json
 node_modules

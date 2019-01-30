@@ -1,130 +1,90 @@
 module Calendar exposing
     ( Date
-    , fromYearMonthDay, fromRawYearMonthDay, fromPosix
+    , fromPosix, fromRaw
     , year, month, day
+    , compare
     )
 
-{-| A calendar date.
-
-
-# Type definition
+{-|
 
 @docs Date
 
 
-# Creating values
+# Constructing a `Date`
 
-@docs fromYearMonthDay, fromRawYearMonthDay, fromPosix
+@docs fromPosix, fromRaw
 
 
-# Accessors
+# Deconstructing a `Date`
 
 @docs year, month, day
 
+
+# Operations over `Date`
+
+@docs compare
+
 -}
 
-import Calendar.Day as Day exposing (Day)
-import Calendar.Month as Month exposing (Month)
-import Calendar.Year as Year exposing (Year)
+import Calendar.Internal as Internal
 import Time
 
 
-{-| A full (Gregorian) calendar date.
+{-| A full Gregorian calendar date
 -}
-type Date
-    = Date InternalDate
+type alias Date =
+    Internal.Date
 
 
-type alias InternalDate =
-    { year : Year
-    , month : Month
-    , day : Day
-    }
+
+-- CONSTRUCTION --
 
 
-{-| Extract the `Year` part of a `Date`.
-
-    > year (fromPosix Time.utc (Time.millisToPosix 0))
-    Year 1970 : Year
-
+{-| Get the calendar date out of a `Posix` time.
 -}
-year : Date -> Year
-year (Date date) =
-    date.year
+fromPosix : Time.Posix -> Date
+fromPosix =
+    Internal.fromPosix
 
 
-{-| Extract the `Year` part of a `Date`.
-
-    > month (fromPosix Time.utc (Time.millisToPosix 0))
-    Jan : Month
-
+{-| Attempt to construct a calendar date from its integer parts.
 -}
-month : Date -> Month
-month (Date date) =
-    date.month
+fromRaw : { year : Int, month : Int, day : Int } -> Maybe Date
+fromRaw =
+    Internal.fromRaw
 
 
-{-| Extract the `Year` part of a `Date`.
 
-    > day (fromPosix Time.utc (Time.millisToPosix 0))
-    Day 1 : Day
+-- DECONSTRUCTION --
 
+
+{-| Get the year part out of a calendar date.
 -}
-day : Date -> Day
-day (Date date) =
-    date.day
+year : Date -> Int
+year =
+    Internal.getYear >> Internal.yearToInt
 
 
-{-| Construct a `Date` from its constituent parts.
-
-Returns `Nothing` if the combination would form an invalid date.
-
+{-| Get the month part out of a calendar date.
 -}
-fromYearMonthDay : Year -> Month -> Day -> Maybe Date
-fromYearMonthDay y m d =
-    case Day.compare d (Day.lastDayOf y m) of
-        GT ->
-            Nothing
-
-        _ ->
-            Just (Date { year = y, month = m, day = d })
+month : Date -> Time.Month
+month =
+    Internal.getMonth
 
 
-{-| Construct a `Date` from its (raw) constituent parts.
-
-Returns `Nothing` if any parts or their combination would form an invalid date.
-
-    > fromRawYearMonthDay 2018 12 11
-    Just (Date { day = Day 11, month = Dec, year = Year 2018 }) : Maybe Date
-
-    > fromRawYearMonthDay 2018 2 31
-    Nothing : Maybe Date
-
+{-| Get the day part out of a calendar date.
 -}
-fromRawYearMonthDay : Int -> Int -> Int -> Maybe Date
-fromRawYearMonthDay rawYear rawMonth rawDay =
-    Year.fromInt rawYear
-        |> Maybe.andThen
-            (\y ->
-                Month.fromInt rawMonth
-                    |> Maybe.andThen
-                        (\m ->
-                            Day.fromInt rawDay
-                                |> Maybe.andThen (fromYearMonthDay y m)
-                        )
-            )
+day : Date -> Int
+day =
+    Internal.getDay >> Internal.dayToInt
 
 
-{-| Get a `Date` from a time zone and posix time.
 
-    > fromPosix Time.utc (Time.millisToPosix 0)
-    Date { day = Day 1, month = Jan, year = Year 1970 } : Date
+-- OPERATIONS --
 
+
+{-| Compare two clock times.
 -}
-fromPosix : Time.Zone -> Time.Posix -> Date
-fromPosix zone posix =
-    Date
-        { year = Year.fromPosix zone posix
-        , month = Month.fromPosix zone posix
-        , day = Day.fromPosix zone posix
-        }
+compare : Date -> Date -> Order
+compare =
+    Internal.compare

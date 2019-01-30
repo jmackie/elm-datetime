@@ -1,98 +1,228 @@
 module Clock exposing
     ( Time
-    , fromRawParts, fromPosix
-    , toMillis
+    , fromPosix, fromRaw, zero
+    , hour, minute, second, millis
+    , compare
+    , incrementHour, incrementMinute, incrementSecond, incrementMillis
+    , decrementHour, decrementMinute, decrementSecond, decrementMillis
     )
 
-{-| A clock time.
-
-
-# Type definition
+{-| Clock time.
 
 @docs Time
 
 
-# Creating values
+# Constructing a `Time`
 
-@docs fromRawParts, fromPosix
+@docs fromPosix, fromRaw, zero
 
 
-# Conversions
+# Deconstructing a `Time`
 
-@docs toMillis
+@docs hour, minute, second, millis
+
+
+# Operations over `Time`
+
+@docs compare
+
+
+# Incrementing a `Time`
+
+@docs incrementHour, incrementMinute, incrementSecond, incrementMillis
+
+
+# Decrementing a `Time`
+
+@docs decrementHour, decrementMinute, decrementSecond, decrementMillis
 
 -}
 
-import Clock.Hour as Hour exposing (Hour)
-import Clock.Minute as Minute exposing (Minute)
-import Clock.Second as Second exposing (Second)
+import Clock.Internal as Internal
 import Time
 
 
 {-| A clock time.
 -}
 type alias Time =
-    { hour : Hour
-    , minute : Minute
-    , second : Second
-    , millisecond : Int
-    }
+    Internal.Time
 
 
-{-| Construct a clock `Time` from raw hour, minute, second, millisecond integers.
 
-    > fromRawParts 12 30 0 0 |> Maybe.map (\t -> (t.hour, t.minute))
-    Just (Hour 12,Minute 30) : Maybe ( Hour, Minute )
+-- CONSTRUCTION --
+
+
+{-| Get the clock time out of a `Posix` time.
+-}
+fromPosix : Time.Posix -> Time
+fromPosix =
+    Internal.fromPosix
+
+
+{-| Attempt to construct a clock time from its integer parts.
+-}
+fromRaw : { hour : Int, minute : Int, second : Int, millis : Int } -> Maybe Time
+fromRaw =
+    Internal.fromRaw
+
+
+{-| Zero time.
+-}
+zero : Time
+zero =
+    Internal.zero
+
+
+
+-- DECONSTRUCTION --
+
+
+{-| Get the hour part out of a clock time.
+-}
+hour : Time -> Int
+hour =
+    Internal.getHour >> Internal.hourToInt
+
+
+{-| Get the minute part out of a clock time.
+-}
+minute : Time -> Int
+minute =
+    Internal.getMinute >> Internal.minuteToInt
+
+
+{-| Get the second part out of a clock time.
+-}
+second : Time -> Int
+second =
+    Internal.getSecond >> Internal.secondToInt
+
+
+{-| Get the second part out of a clock time.
+-}
+millis : Time -> Int
+millis =
+    Internal.getMillis >> Internal.millisToInt
+
+
+
+-- OPERATIONS --
+
+
+{-| Compare two clock times.
+-}
+compare : Time -> Time -> Order
+compare =
+    Internal.compare
+
+
+
+-- INCREMENTING --
+
+
+{-| Increment the hour part of a clock time.
+
+Returns the incremented time and a `Bool` indicating whether the clock has rolled
+over 24 hours.
+
+TODO: example to demonstrate the meaning of the return
 
 -}
-fromRawParts : Int -> Int -> Int -> Int -> Maybe Time
-fromRawParts rawHour rawMinute rawSecond rawMillisecond =
-    Hour.fromInt rawHour
-        |> Maybe.andThen
-            (\hour ->
-                Minute.fromInt rawMinute
-                    |> Maybe.andThen
-                        (\minute ->
-                            Second.fromInt rawSecond
-                                |> Maybe.andThen
-                                    (\second ->
-                                        Just
-                                            { hour = hour
-                                            , minute = minute
-                                            , second = second
-                                            , millisecond = rawMillisecond
-                                            }
-                                    )
-                        )
-            )
+incrementHour : Time -> ( Time, Bool )
+incrementHour =
+    Internal.incrementHour
 
 
-{-| Get a clock `Time` from a time zone and posix time.
+{-| Increment the minute part of a clock time.
 
-    > fromPosix Time.utc (Time.millisToPosix 0)
-    { hour = Hour 0, millisecond = 0, minute = Minute 0, second = Second 0 } : Time
+Returns the incremented time and a `Bool` indicating whether the clock has rolled
+over 24 hours.
+
+TODO: example to demonstrate the meaning of the return
 
 -}
-fromPosix : Time.Zone -> Time.Posix -> Time
-fromPosix zone posix =
-    { hour = Hour.fromPosix zone posix
-    , minute = Minute.fromPosix zone posix
-    , second = Second.fromPosix zone posix
-    , millisecond = Time.toMillis zone posix
-    }
+incrementMinute : Time -> ( Time, Bool )
+incrementMinute =
+    Internal.incrementMinute
 
 
-{-| Convert a `Time` to milliseconds.
+{-| Increment the second part of a clock time.
 
-    > fromRawParts 12 30 0 0 |> Maybe.map toMillis
-    Just 45000000 : Maybe Int
+Returns the incremented time and a `Bool` indicating whether the clock has rolled
+over 24 hours.
+
+TODO: example to demonstrate the meaning of the return
 
 -}
-toMillis : Time -> Int
-toMillis { hour, minute, second, millisecond } =
-    List.sum
-        [ Hour.toInt hour * 3600000
-        , Minute.toInt minute * 60000
-        , Second.toInt second * 1000
-        , millisecond
-        ]
+incrementSecond : Time -> ( Time, Bool )
+incrementSecond =
+    Internal.incrementSecond
+
+
+{-| Increment the millisecond part of a clock time.
+
+Returns the incremented time and a `Bool` indicating whether the clock has rolled
+over 24 hours.
+
+TODO: example to demonstrate the meaning of the return
+
+-}
+incrementMillis : Time -> ( Time, Bool )
+incrementMillis =
+    Internal.incrementMillis
+
+
+
+-- DECREMENTING --
+
+
+{-| Decrement the hour part of a clock time.
+
+Returns the incremented time and a `Bool` indicating whether the clock has rolled
+over 24 hours.
+
+TODO: example to demonstrate the meaning of the return
+
+-}
+decrementHour : Time -> ( Time, Bool )
+decrementHour =
+    Internal.decrementHour
+
+
+{-| Decrement the minute part of a clock time.
+
+Returns the decremented time and a `Bool` indicating whether the clock has rolled
+over 24 hours.
+
+TODO: example to demonstrate the meaning of the return
+
+-}
+decrementMinute : Time -> ( Time, Bool )
+decrementMinute =
+    Internal.decrementMinute
+
+
+{-| Decrement the second part of a clock time.
+
+Returns the decremented time and a `Bool` indicating whether the clock has rolled
+over 24 hours.
+
+TODO: example to demonstrate the meaning of the return
+
+-}
+decrementSecond : Time -> ( Time, Bool )
+decrementSecond =
+    Internal.decrementSecond
+
+
+{-| Decrement the millisecond part of a clock time.
+
+Returns the decremented time and a `Bool` indicating whether the clock has rolled
+over 24 hours.
+
+TODO: example to demonstrate the meaning of the return
+
+-}
+decrementMillis : Time -> ( Time, Bool )
+decrementMillis =
+    Internal.decrementMillis
